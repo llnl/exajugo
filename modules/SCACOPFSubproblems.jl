@@ -846,8 +846,6 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
                            use_huber_like_penalty::Bool=true, output_dir::Union{Nothing, String}=nothing,
                            cont_idx::Union{Nothing, Int}=nothing, use_opt::Bool=false,
                            build_for_proxdec::Bool=false)
-    
-
     quadratic_relaxation_k > 0 || error("quadratic relaxation penalty should be positive")
 
     if build_for_proxdec
@@ -855,11 +853,23 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
         isnothing(cont_idx) && error("ProxDec currently requires a listed contingency")
     end
 
+    #
     # get primal starting point
-    if use_opt
-        x0 = get_primal_starting_point(psd, con, basecase_solution, previous_solution, opt = NLSolver)
+    #
+    
+    # element identifiers from psd.G, psd.L, and psd.T will be in 'con_start'
+    # same identifiers but local to the models will continue to be kept in 'con' for addpowerflowcons!
+    con_start = if build_for_proxdec
+                    GenericContingency(Int.(psd.G[con.generators_out, :Generator]),
+                                       Int.(psd.L[con.lines_out, :Line]),
+                                       Int.(psd.T[con.transformers_out, :Transformer]))
     else
-        x0 = get_primal_starting_point(psd, con, basecase_solution, previous_solution)
+        con
+    end    
+    if use_opt
+        x0 = get_primal_starting_point(psd, con_start, basecase_solution, previous_solution, opt = NLSolver)
+    else
+        x0 = get_primal_starting_point(psd, con_start, basecase_solution, previous_solution)
     end
     
     # create model
@@ -901,16 +911,32 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
                       qslackp_nk, sslack_lik, sslack_tik, psd, con)
     
     # ramp rate constraints
-    Gonline = if length(con.generators_out)>0 setdiff(1:nrow(psd.G), con.generators_out)
-              else 1:nrow(psd.G)
-              end
+    # convert generator-outage indices to model-local rows.
+    g_out_rows = Int[]
 
+    for id in con.generators_out
+      if build_for_proxdec
+        1 <= id <= nrow(psd.G) || error("Invalid generator row $id")
+        push!(g_out_rows, id)
+      else
+        # Legacy path uses original RAW generator IDs.
+        g = findfirst(==(id), psd.G[!, :Generator])
+        isnothing(g) && error("Generator ID $id not found")
+        push!(g_out_rows, g)
+      end
+    end
+
+    Gonline = setdiff(1:nrow(psd.G), g_out_rows)
     @constraint(m, [g in Gonline], psd.G[g,:Plb] <= p_gk[g] <= psd.G[g,:Pub])
     @constraint(m, [g in Gonline], psd.G[g,:Qlb] <= q_gk[g] <= psd.G[g,:Qub])
-    @constraint(m, [g in Gonline], p_gk[g] - p_g0[g] <=
-                                   psd.G[g, :Pub] * psd.G[g, :RampRate] * minutes_since_base)
-    @constraint(m, [g in Gonline], p_g0[g] - p_gk[g] <=
-                                   psd.G[g, :Pub] * psd.G[g, :RampRate] * minutes_since_base)
+    @constraint(m, [g in Gonline], p_gk[g] - p_g0[g] <= psd.G[g,:Pub] * psd.G[g,:RampRate] * minutes_since_base)
+    @constraint(m, [g in Gonline], p_g0[g] - p_gk[g] <= psd.G[g,:Pub] * psd.G[g,:RampRate] * minutes_since_base)
+
+    # Enforce outaged generators.
+    for g in g_out_rows
+        JuMP.fix(p_gk[g], 0.0; force=true)
+        JuMP.fix(q_gk[g], 0.0; force=true)
+    end
     
     # enforce out of service generators
     if length(con.generators_out) > 0
