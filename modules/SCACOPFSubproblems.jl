@@ -10,6 +10,13 @@ export solve_base_power_flow, solve_basecase, solve_contingency, solve_random_co
        SubproblemSolution, BasecaseSolution, ContingencySolution, SCACOPFsolution,
        write_solution
 
+# ProxDec reusable models and reoptimization
+export ProxDecMasterContext, ProxDecContingencyContext
+export proxdec_contingency
+export proxdec_master_dispatch_indices
+export reoptimize_proxdec_master!
+export reoptimize_proxdec_contingency!
+
 ## load external modules
 
 using JuMP, Printf, DataFrames, Random, Distributions
@@ -27,6 +34,7 @@ include("SCACOPFSubproblems/starting_point.jl")
 include("SCACOPFSubproblems/power_flow_constraints.jl")
 include("SCACOPFSubproblems/contingency_n-k.jl")
 include("SCACOPFSubproblems/huber_loss.jl")
+include("SCACOPFSubproblems/proxdec_reuse.jl")
 
 ## constants
 
@@ -146,19 +154,17 @@ end
 # function to solve base case, possibly with recourse approximations
 
 function solve_basecase(psd::SCACOPFdata, NLSolver;
-#                       recourse_f::T=nothing,   # recourse function value
-#                       recourse_g::T=nothing,   # recourse function gradient
-#                       recourse_H::T=nothing,   # recourse function hessian
-                       recourse_f::Union{Nothing, Vector{<:Function}}=nothing,   # recourse function value
-                       recourse_g::Union{Nothing, Vector{<:Function}}=nothing,   # recourse function gradient
-                       recourse_H::Union{Nothing, Vector{<:Function}}=nothing,   # recourse function hessian
-                       previous_solution::Union{Nothing,
-                                                BasecaseSolution}=nothing,
-                       output_dir::Union{Nothing, String} = nothing,
-                       use_opt::Bool=false
-#                       )::BasecaseSolution where {T <: Union{Nothing, Function}}
-                      )::Tuple{BasecaseSolution, Model}
-    
+                        recourse_f::Union{Nothing, Vector{<:Function}}=nothing,   # recourse function value
+                        recourse_g::Union{Nothing, Vector{<:Function}}=nothing,   # recourse function gradient
+                        recourse_H::Union{Nothing, Vector{<:Function}}=nothing,   # recourse function hessian
+                        previous_solution::Union{Nothing, BasecaseSolution}=nothing,
+                        output_dir::Union{Nothing, String} = nothing,
+                        use_opt::Bool=false,
+                        build_for_proxdec::Bool=false)
+    if build_for_proxdec
+        (isnothing(recourse_f) && isnothing(recourse_g) && isnothing(recourse_H)) ||
+            error("ProxDec constructs its own master approximation")
+    end    
     # get primal starting point
     if use_opt
         x0 = get_primal_starting_point(psd, previous_solution, opt = NLSolver)
@@ -284,14 +290,25 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
     end 
 
     # declare objective
- #   @objective(m, Min, production_cost + psd.delta*basecase_penalty +
-  #             (1-psd.delta)*contingency_penalty)
+    # @objective(m, Min, production_cost + psd.delta*basecase_penalty +
+    #            (1-psd.delta)*contingency_penalty)
+    if build_for_proxdec
+        # Smooth base-case ACOPF objective.
+        # ProxDec adds linear and quadratic terms when reoptimizing.
+        @objective(m, Min, production_cost + psd.delta * basecase_penalty)
 
-    @NLobjective(m, Min, production_cost + psd.delta*basecase_penalty +
-               (1-psd.delta)*contingency_penalty)
+        # Return the complete JuMP model without solving it.
+        return ProxDecMasterContext(m, JuMP.all_variables(m), collect(p_g), copy(JuMP.objective_function(m)),
+                                    production_cost, basecase_penalty)
+    else
+        # Original ExaJuGO objective, unchanged.
+        @NLobjective(m, Min, production_cost + psd.delta * basecase_penalty +
+            (1 - psd.delta) * contingency_penalty)
 
-#    write_to_file(m, "base_case_model.nl")
- #   write_to_file(m, "base_case_model.lp")
+    end
+
+    # write_to_file(m, "base_case_model.nl")
+    # write_to_file(m, "base_case_model.lp")
 
     # attempt to solve SCACOPF
     JuMP.optimize!(m)
@@ -780,62 +797,64 @@ end
     
 function solve_contingency(psd::SCACOPFdata, k::Int,
                           basecase_solution::BasecaseSolution, NLSolver;
-                          previous_solution::Union{Nothing, T} 
-                                             where {T<:SubproblemSolution} =
-                                             nothing,
+                          previous_solution::Union{Nothing, T} where {T<:SubproblemSolution} = nothing,
                           quadratic_relaxation_k::Float64=Inf,
                           minutes_since_base::Float64=1.0,
                           use_huber_like_penalty::Bool=true,
                           output_dir::Union{Nothing, String} = nothing,
-                          use_opt::Bool=false
-                          )::ContingencySolution
-    
-    # check we are given a valid contingency index
-    if k <= 0 || k > nrow(psd.K)
-        error("instance does not have contingency No ", k, " (N cont: ",
-              nrow(psd.K), ").")
+                          use_opt::Bool=false,
+                          build_for_proxdec::Bool=false)
+    1 <= k <= nrow(psd.K) || error("Invalid contingency index $k")
+
+    # ProxDec explicitly converts original element IDs to
+    # row indices in psd.G, psd.L, and psd.T.
+    #
+    # Keep the original construction for existing callers.
+    con = if build_for_proxdec
+        proxdec_contingency(psd, k)
+    else
+        GenericContingency(psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Generator)],
+                           psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Line)],
+                           psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Transformer)])
     end
-    
-    con = GenericContingency(psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Generator)], 
-                                psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Line)], 
-                                psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Transformer)])
-    
-    # call function for generic contingencies
-    sol = solve_contingency(psd, con, basecase_solution, NLSolver,
-                            previous_solution=previous_solution,
-                            quadratic_relaxation_k=quadratic_relaxation_k,
-                            minutes_since_base=minutes_since_base,
-                            use_huber_like_penalty=use_huber_like_penalty,
-                            output_dir = output_dir,
-                            cont_idx = k,
-                            use_opt = use_opt)
-    
-    # override fields for contingencies and return (this is TEMPORARY... only for backwards
-    # compatibility)
-    sol.cont_Kidx = k
-    sol.cont_id = psd.K[k,:Contingency]
-    sol.cont_idout = psd.K[k,:IDout]
-    sol.cont_type = psd.K[k,:ConType]
-    sol.cont_alt = nothing
-    return sol
-    
+
+    result = solve_contingency(psd, con, basecase_solution, NLSolver;
+                               previous_solution=previous_solution, quadratic_relaxation_k=quadratic_relaxation_k,
+                               minutes_since_base=minutes_since_base, use_huber_like_penalty=use_huber_like_penalty,
+                               output_dir=output_dir, cont_idx=k, use_opt=use_opt,
+                               build_for_proxdec=build_for_proxdec)
+
+    # The ProxDec path returns a reusable model context.
+    if build_for_proxdec
+        return result
+    end
+
+    # Preserve original ExaJuGO solution metadata including backward compatibility
+    result.cont_Kidx = k
+    result.cont_id = psd.K[k, :Contingency]
+    result.cont_idout = psd.K[k, :IDout]
+    result.cont_type = psd.K[k, :ConType]
+    result.cont_alt = nothing
+
+    return result
 end
 
 function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
-                          basecase_solution::BasecaseSolution, NLSolver;
-                          previous_solution::Union{Nothing, T} 
-                                             where {T<:SubproblemSolution} =
-                                             nothing,
-                          quadratic_relaxation_k::Float64=Inf,
-                          minutes_since_base::Float64=1.0,
-                          use_huber_like_penalty::Bool=true,
-                          output_dir::Union{Nothing, String} = nothing,
-                          cont_idx::Union{Nothing, Int64} = nothing,
-                          use_opt::Bool=false)::ContingencySolution
+                           basecase_solution::BasecaseSolution, NLSolver;
+                           previous_solution::Union{Nothing, SubproblemSolution}=nothing,
+                           quadratic_relaxation_k::Float64=Inf, minutes_since_base::Float64=1.0,
+                           use_huber_like_penalty::Bool=true, output_dir::Union{Nothing, String}=nothing,
+                           cont_idx::Union{Nothing, Int}=nothing, use_opt::Bool=false,
+                           build_for_proxdec::Bool=false)
     
 
     quadratic_relaxation_k > 0 || error("quadratic relaxation penalty should be positive")
-    
+
+    if build_for_proxdec
+        isfinite(quadratic_relaxation_k) || error("ProxDec requires a finite quadratic coefficient")
+        isnothing(cont_idx) && error("ProxDec currently requires a listed contingency")
+    end
+
     # get primal starting point
     if use_opt
         x0 = get_primal_starting_point(psd, con, basecase_solution, previous_solution, opt = NLSolver)
@@ -864,15 +883,17 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     @variable(m, pslackp_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackp_nk][n])
     @variable(m, qslackm_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackm_nk][n])
     @variable(m, qslackp_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackp_nk][n])
-    @variable(m, sslack_lik[l=1:nrow(psd.L), i=1:2] >= 0,
-              start=x0[:sslack_lik][l,i])
-    @variable(m, sslack_tik[t=1:nrow(psd.T), i=1:2] >= 0,
-              start=x0[:sslack_tik][t,i])
+    @variable(m, sslack_lik[l=1:nrow(psd.L), i=1:2] >= 0, start=x0[:sslack_lik][l,i])
+    @variable(m, sslack_tik[t=1:nrow(psd.T), i=1:2] >= 0, start=x0[:sslack_tik][t,i])
     
     # fix angle at reference bus to zero
-    for con_RB=1:length(psd.Con_RefBus[k])
-        JuMP.fix(theta_nk[psd.Con_RefBus[k][con_RB]], 0.0, force=true)
+    if isnothing(cont_idx)
+        error("Reference buses for an unlisted contingency must be computed from its network topology")
     end
+
+    for n in psd.Con_RefBus[cont_idx]
+         JuMP.fix(theta_nk[n], 0.0; force=true)
+    end  
     
     # add power flow constraints
     addpowerflowcons!(m, v_nk, theta_nk, p_lik, q_lik, p_tik, q_tik, b_sk,
@@ -902,8 +923,7 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     # coupling constraints (relaxed non-anticipativity)
     if quadratic_relaxation_k < Inf
         @variable(m, aux_slack_gk[g=1:nrow(psd.G)])
-        @constraint(m, non_anticipativity_con[g=1:nrow(psd.G)],
-                    p_g0[g] - basecase_solution.p_g[g] == aux_slack_gk[g])
+        @constraint(m, non_anticipativity_con[g=1:nrow(psd.G)], p_g0[g] - basecase_solution.p_g[g] == aux_slack_gk[g])
     else
         @constraint(m, non_anticipativity_con[g=1:nrow(psd.G)], p_g0[g] == basecase_solution.p_g[g])
     end
@@ -988,20 +1008,61 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     b_sk_para = 1e-10
     
     # declare objective
-    if !use_huber_like_penalty
-        voltages_mag_reg = @expression(m, mag_para * sum(v_nk[n] * v_nk[n] for n=1:nrow(psd.N)))
-        voltages_ang_reg = @expression(m, amg_para * sum(theta_nk[n] * theta_nk[n] for n=1:nrow(psd.N)))
-        b_sk_reg =         @expression(m, b_sk_para * sum(b_sk[s] * b_sk[s] for s=1:nrow(psd.SSh)))
 
-        @objective(m, Min, contingency_penalty + quadratic_relaxation_term +
-                     voltages_mag_reg + voltages_ang_reg + b_sk_reg)
+    # Declare objective
+    if build_for_proxdec
+        if use_huber_like_penalty
+            # Preserve the original Huber-like recourse penalty.
+            voltages_mag_reg = @NLexpression(m, mag_para * sum(v_nk[n]^2 for n=1:nrow(psd.N)))
+            voltages_ang_reg = @NLexpression(m, amg_para * sum(theta_nk[n]^2 for n=1:nrow(psd.N)))
+            b_sk_reg = @NLexpression(m, b_sk_para * sum(b_sk[s]^2 for s=1:nrow(psd.SSh)))
+
+            # A nonlinear parameter allows in-place changes to the quadratic proximal coefficient.
+            @NLparameter(m, proxdec_kappa == quadratic_relaxation_k)
+
+            @NLobjective(m, Min, contingency_penalty + proxdec_kappa * sum(aux_slack_gk[g]^2 for g=1:nrow(psd.G))
+                                 + voltages_mag_reg + voltages_ang_reg + b_sk_reg)
+            base_quad = nothing
+            kappa_param = proxdec_kappa
+
+        else
+            # Entire objective is quadratic.
+            voltages_mag_reg = @expression(m, mag_para * sum(v_nk[n]^2 for n=1:nrow(psd.N)))
+            voltages_ang_reg = @expression(m, amg_para * sum(theta_nk[n]^2 for n=1:nrow(psd.N)))
+            b_sk_reg = @expression(m, b_sk_para * sum(b_sk[s]^2 for s=1:nrow(psd.SSh)))
+
+            # Save the objective WITHOUT the proximal term.
+            @objective(m, Min, contingency_penalty + voltages_mag_reg + voltages_ang_reg + b_sk_reg)
+            base_quad = copy(JuMP.objective_function(m))
+
+            # Initial proximal quadratic.
+            obj = copy(base_quad)
+
+            for a in aux_slack_gk
+                JuMP.add_to_expression!(obj, quadratic_relaxation_k, a, a)
+            end
+            JuMP.set_objective_function(m, obj)
+            kappa_param = nothing
+        end
+
+        # Return model and JuMP objects WITHOUT optimize!.
+        return ProxDecContingencyContext(m, JuMP.all_variables(m), collect(p_g0), collect(p_gk),
+                                         collect(aux_slack_gk), collect(non_anticipativity_con),
+                                         contingency_penalty, (voltages_mag_reg, voltages_ang_reg, b_sk_reg),
+                                         base_quad, kappa_param)
+    elseif !use_huber_like_penalty
+        # Original ExaJuGO quadratic objective.
+        voltages_mag_reg = @expression(m, mag_para * sum(v_nk[n]^2 for n=1:nrow(psd.N)))
+        voltages_ang_reg = @expression(m, amg_para * sum(theta_nk[n]^2 for n=1:nrow(psd.N)))
+        b_sk_reg = @expression(m, b_sk_para * sum(b_sk[s]^2 for s=1:nrow(psd.SSh)))
+        @objective(m, Min, contingency_penalty + quadratic_relaxation_term + voltages_mag_reg + voltages_ang_reg + b_sk_reg)
     else
-        voltages_mag_reg = @NLexpression(m, mag_para * sum(v_nk[n] * v_nk[n] for n=1:nrow(psd.N)))
-        voltages_ang_reg = @NLexpression(m, amg_para * sum(theta_nk[n] * theta_nk[n] for n=1:nrow(psd.N)))
-        b_sk_reg =         @NLexpression(m, b_sk_para * sum(b_sk[s] * b_sk[s] for s=1:nrow(psd.SSh)))
 
-        @NLobjective(m, Min, contingency_penalty + quadratic_relaxation_term +
-                     voltages_mag_reg + voltages_ang_reg + b_sk_reg)
+        # Original ExaJuGO Huber-like objective.
+        voltages_mag_reg = @NLexpression(m, mag_para * sum(v_nk[n]^2 for n=1:nrow(psd.N)))
+        voltages_ang_reg = @NLexpression(m, amg_para * sum(theta_nk[n]^2 for n=1:nrow(psd.N)))
+        b_sk_reg = @NLexpression(m, b_sk_para * sum(b_sk[s]^2 for s=1:nrow(psd.SSh)))
+        @NLobjective(m, Min, contingency_penalty + quadratic_relaxation_term + voltages_mag_reg + voltages_ang_reg + b_sk_reg)
     end
     
     # attempt to solve contingency subproblem
