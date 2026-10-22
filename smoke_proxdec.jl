@@ -1,4 +1,3 @@
-
 using Test
 using JuMP
 using Ipopt
@@ -94,32 +93,21 @@ cont_model = ctx.model
 cont_nvars = JuMP.num_variables(cont_model)
 
 println("First proximal solve ...")
-
 t3 = @elapsed p1 = reoptimize_proxdec_contingency!(ctx, base.p_g, lambda, omega)
-
 @test isfinite(p1.envelope)
 @test all(isfinite, p1.grad_p)
-
 @test isapprox(p1.envelope, omega * p1.solver_objective; rtol=1e-6, atol=1e-5)
-
 @test p1.coupling_residual < 1e-5
 
 println("Second proximal solve, changed lambda ...")
-
 t4 = @elapsed p2 = reoptimize_proxdec_contingency!(ctx, base.p_g, 0.8 * lambda, omega)
-
 @test isfinite(p2.envelope)
-
 @test isapprox(p2.envelope, omega * p2.solver_objective; rtol=1e-6, atol=1e-5)
-
 @test ctx.model === cont_model
 @test JuMP.num_variables(ctx.model) == cont_nvars
 
 println("Contingency times: ", t3, " / ", t4)
-
 println("Proximal displacement: ", maximum(abs.(p1.displacement)))
-
 println("Envelope: ", p1.envelope)
 println("Gradient infinity norm: ", maximum(abs.(p1.grad_p)))
-
 println("\nProxDec reusable-model smoke test passed.")

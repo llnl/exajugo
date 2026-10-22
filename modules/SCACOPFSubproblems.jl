@@ -806,16 +806,13 @@ function solve_contingency(psd::SCACOPFdata, k::Int,
                           build_for_proxdec::Bool=false)
     1 <= k <= nrow(psd.K) || error("Invalid contingency index $k")
 
-    # ProxDec explicitly converts original element IDs to
-    # row indices in psd.G, psd.L, and psd.T.
+    # ProxDec explicitly converts original element IDs to row indices in psd.G, psd.L, and psd.T.
     #
     # Keep the original construction for existing callers.
-    con = if build_for_proxdec
-        proxdec_contingency(psd, k)
-    else
-        GenericContingency(psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Generator)],
-                           psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Line)],
-                           psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Transformer)])
+    con = if build_for_proxdec proxdec_contingency(psd, k)
+    else GenericContingency(psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Generator)],
+                            psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Line)],
+                            psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Transformer)])
     end
 
     result = solve_contingency(psd, con, basecase_solution, NLSolver;
@@ -876,19 +873,17 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     m = Model(NLSolver)
 
     # contingency variables
-    @variable(m, psd.N[n,:EVlb] <= v_nk[n=1:nrow(psd.N)] <= psd.N[n,:EVub],
-                 start=x0[:v_nk][n])
+    @variable(m, psd.N[n,:EVlb] <= v_nk[n=1:nrow(psd.N)] <= psd.N[n,:EVub], start=x0[:v_nk][n])
     @variable(m, theta_nk[n=1:nrow(psd.N)], start=x0[:theta_nk][n])
     @variable(m, p_lik[l=1:nrow(psd.L), i=1:2], start=x0[:p_lik][l,i])
     @variable(m, q_lik[l=1:nrow(psd.L), i=1:2], start=x0[:q_lik][l,i])
     @variable(m, p_tik[t=1:nrow(psd.T), i=1:2], start=x0[:p_tik][t,i])
     @variable(m, q_tik[t=1:nrow(psd.T), i=1:2], start=x0[:q_tik][t,i])
-    @variable(m, psd.SSh[s,:Blb] <= b_sk[s=1:nrow(psd.SSh)] <=
-              psd.SSh[s,:Bub], start=x0[:b_sk][s])
+    @variable(m, psd.SSh[s,:Blb] <= b_sk[s=1:nrow(psd.SSh)] <= psd.SSh[s,:Bub], start=x0[:b_sk][s])
     @variable(m, p_gk[g=1:nrow(psd.G)], start = x0[:p_gk][g])
     @variable(m, q_gk[g=1:nrow(psd.G)], start = x0[:q_gk][g])
-    @variable(m, psd.G[g,:Plb] <= p_g0[g=1:nrow(psd.G)] <= psd.G[g,:Pub],
-              start=x0[:p_gk][g])       # clone of first stage variable
+    # clone of first stage variable
+    @variable(m, psd.G[g,:Plb] <= p_g0[g=1:nrow(psd.G)] <= psd.G[g,:Pub], start=x0[:p_gk][g]) 
     @variable(m, pslackm_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackm_nk][n])
     @variable(m, pslackp_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackp_nk][n])
     @variable(m, qslackm_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackm_nk][n])
@@ -938,54 +933,42 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
         JuMP.fix(q_gk[g], 0.0; force=true)
     end
     
-    # enforce out of service generators
-    if length(con.generators_out) > 0
-        for congo in con.generators_out
-            JuMP.fix.(p_gk[findall(psd.G[!, :Generator] .== congo)], 0.0, force=true)
-            JuMP.fix.(q_gk[findall(psd.G[!, :Generator] .== congo)], 0.0, force=true)
-        end
-    end
-    
     # coupling constraints (relaxed non-anticipativity)
     if quadratic_relaxation_k < Inf
+        println("Using proximal quadratic relaxation for non-anticipativity")
         @variable(m, aux_slack_gk[g=1:nrow(psd.G)])
         @constraint(m, non_anticipativity_con[g=1:nrow(psd.G)], p_g0[g] - basecase_solution.p_g[g] == aux_slack_gk[g])
     else
+        println("Using exact non-anticipativity (no proximal quadratic relaxation)") 
         @constraint(m, non_anticipativity_con[g=1:nrow(psd.G)], p_g0[g] == basecase_solution.p_g[g])
     end
     
     # contingency penalty
     contingency_penalty = nothing
     if !use_huber_like_penalty
-        # println("Not using huber like penalty")
+        println("Not using huber like penalty")
         contingency_penalty = JuMP.GenericQuadExpr(JuMP.AffExpr(0))
         for n = 1:nrow(psd.N)
-            add_to_expression!(contingency_penalty,
-                               psd.a[:P], pslackm_nk[n], pslackm_nk[n])
+            add_to_expression!(contingency_penalty, psd.a[:P], pslackm_nk[n], pslackm_nk[n])
             add_to_expression!(contingency_penalty, psd.b[:P], pslackm_nk[n])
-            add_to_expression!(contingency_penalty,
-                               psd.a[:P], pslackp_nk[n], pslackp_nk[n])
+            add_to_expression!(contingency_penalty, psd.a[:P], pslackp_nk[n], pslackp_nk[n])
             add_to_expression!(contingency_penalty, psd.b[:P], pslackp_nk[n])
-            add_to_expression!(contingency_penalty,
-                               psd.a[:Q], qslackm_nk[n], qslackm_nk[n])
+            add_to_expression!(contingency_penalty, psd.a[:Q], qslackm_nk[n], qslackm_nk[n])
             add_to_expression!(contingency_penalty, psd.b[:Q], qslackm_nk[n])
-            add_to_expression!(contingency_penalty,
-                               psd.a[:Q], qslackp_nk[n], qslackp_nk[n])
+            add_to_expression!(contingency_penalty, psd.a[:Q], qslackp_nk[n], qslackp_nk[n])
             add_to_expression!(contingency_penalty, psd.b[:Q], qslackp_nk[n])
         end
         for l = 1:nrow(psd.L), i=1:2
-            add_to_expression!(contingency_penalty,
-                               psd.a[:S], sslack_lik[l,i], sslack_lik[l,i])
+            add_to_expression!(contingency_penalty, psd.a[:S], sslack_lik[l,i], sslack_lik[l,i])
             add_to_expression!(contingency_penalty, psd.b[:S], sslack_lik[l,i])
         end
         for t = 1:nrow(psd.T), i=1:2
-            add_to_expression!(contingency_penalty,
-                               psd.a[:S], sslack_tik[t,i], sslack_tik[t,i])
+            add_to_expression!(contingency_penalty, psd.a[:S], sslack_tik[t,i], sslack_tik[t,i])
             add_to_expression!(contingency_penalty, psd.b[:S], sslack_tik[t,i])
         end
     else
 
-        # println("Using huber like penalty")
+        println("Using huber like penalty")
         # register Huber-like penalty functions
         hP = HuberLikePenalty(psd.a[:P], psd.b[:P],
                               2 * psd.a[:P] * (10.0/psd.MVAbase) + psd.b[:P], # slope at 10MW is max
@@ -1021,8 +1004,7 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
         @assert length(aux_slack_gk) == nrow(psd.G)
         quadratic_relaxation_term = JuMP.GenericQuadExpr(JuMP.AffExpr(0))
         for g = 1:length(aux_slack_gk)
-            add_to_expression!(quadratic_relaxation_term,
-                               quadratic_relaxation_k,
+            add_to_expression!(quadratic_relaxation_term, quadratic_relaxation_k,
                                aux_slack_gk[g], aux_slack_gk[g])
         end
     else
@@ -1033,8 +1015,6 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     amg_para = 1e-10
     b_sk_para = 1e-10
     
-    # declare objective
-
     # Declare objective
     if build_for_proxdec
         if use_huber_like_penalty
@@ -1097,10 +1077,9 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     if JuMP.primal_status(m) != MOI.FEASIBLE_POINT &&
        JuMP.primal_status(m) != MOI.NEARLY_FEASIBLE_POINT && 
        JuMP.termination_status(m) != MOI.NEARLY_FEASIBLE_POINT
-       #    Uncomment this line of code
-           # error("solver failed to find a feasible solution.")
-           println("solver failed to find a feasible solution.")
-           failed_conv = true
+       error("solver failed to find a feasible solution.")
+       #println("solver failed to find a feasible solution.")
+       failed_conv = true
     end
     
     # compute gradient/subgradient
@@ -1109,15 +1088,14 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     else
         if has_duals(m)
             obj_grad = JuMP.dual.(non_anticipativity_con)
-                       # check sign consistency before using these duals; JuMP does not use the same
-                       # duality conventions as most OR modeling software
+            # check sign consistency before using these duals; JuMP does not use the same
+            # duality conventions as most OR modeling software
         else
             obj_grad = nothing
         end
     end
 
-    solution = ContingencySolution(psd, con,
-                                    JuMP.value.(v_nk), JuMP.value.(theta_nk),
+    solution = ContingencySolution(psd, con, JuMP.value.(v_nk), JuMP.value.(theta_nk),
                                     convert(Vector{Float64}, JuMP.value.(b_sk)),
                                     JuMP.value.(p_gk), JuMP.value.(q_gk),
                                     0.0, objective_value(m), obj_grad)
