@@ -159,8 +159,7 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
                         recourse_H::Union{Nothing, Vector{<:Function}}=nothing,   # recourse function hessian
                         previous_solution::Union{Nothing, BasecaseSolution}=nothing,
                         output_dir::Union{Nothing, String} = nothing,
-                        use_opt::Bool=false,
-                        build_for_proxdec::Bool=false)
+                        use_opt::Bool=false, build_for_proxdec::Bool=false)
     if build_for_proxdec
         (isnothing(recourse_f) && isnothing(recourse_g) && isnothing(recourse_H)) ||
             error("ProxDec constructs its own master approximation")
@@ -176,28 +175,22 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
     m = Model(NLSolver)
 
     # base case variables
-    @variable(m, psd.N[n,:Vlb] <= v_n[n=1:nrow(psd.N)] <= psd.N[n,:Vub],
-              start=x0[:v_n][n])
+    @variable(m, psd.N[n,:Vlb] <= v_n[n=1:nrow(psd.N)] <= psd.N[n,:Vub], start=x0[:v_n][n])
     @variable(m, theta_n[n=1:nrow(psd.N)], start=x0[:theta_n][n])
     @variable(m, p_li[l=1:nrow(psd.L), i=1:2], start=x0[:p_li][l,i])
     @variable(m, q_li[l=1:nrow(psd.L), i=1:2], start=x0[:q_li][l,i])
     @variable(m, p_ti[t=1:nrow(psd.T), i=1:2], start=x0[:p_ti][t,i])
     @variable(m, q_ti[t=1:nrow(psd.T), i=1:2], start=x0[:q_ti][t,i])
-    @variable(m, psd.SSh[s,:Blb] <= b_s[s=1:nrow(psd.SSh)] <=
-              psd.SSh[s,:Bub], start=x0[:b_s][s])
-    @variable(m, psd.G[g,:Plb] <= p_g[g=1:nrow(psd.G)] <= psd.G[g,:Pub],
-              start=x0[:p_g][g])
-    @variable(m, psd.G[g,:Qlb] <= q_g[g=1:nrow(psd.G)] <= psd.G[g,:Qub],
-              start=x0[:q_g][g])
+    @variable(m, psd.SSh[s,:Blb] <= b_s[s=1:nrow(psd.SSh)] <= psd.SSh[s,:Bub], start=x0[:b_s][s])
+    @variable(m, psd.G[g,:Plb] <= p_g[g=1:nrow(psd.G)] <= psd.G[g,:Pub], start=x0[:p_g][g])
+    @variable(m, psd.G[g,:Qlb] <= q_g[g=1:nrow(psd.G)] <= psd.G[g,:Qub], start=x0[:q_g][g])
     @variable(m, c_g[g=1:nrow(psd.G)], start=x0[:c_g][g])
     @variable(m, pslackm_n[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackm_n][n])
     @variable(m, pslackp_n[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackp_n][n])
     @variable(m, qslackm_n[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackm_n][n])
     @variable(m, qslackp_n[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackp_n][n])
-    @variable(m, sslack_li[l=1:nrow(psd.L), i=1:2] >= 0,
-              start=x0[:sslack_li][l,i])
-    @variable(m, sslack_ti[t=1:nrow(psd.T), i=1:2] >= 0,
-              start=x0[:sslack_ti][t,i])
+    @variable(m, sslack_li[l=1:nrow(psd.L), i=1:2] >= 0, start=x0[:sslack_li][l,i])
+    @variable(m, sslack_ti[t=1:nrow(psd.T), i=1:2] >= 0, start=x0[:sslack_ti][t,i])
     
     # fix angle at reference bus to zero
     JuMP.fix(theta_n[psd.RefBus], 0.0, force=true)
@@ -211,16 +204,15 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
         c_g = Vector{JuMP.QuadExpr}(undef, size(psd.G, 1))
         # production cost (continous quadratic formulation)
         for g = 1:size(psd.G, 1)
-            c_g[g] = QuadExpr( AffExpr(psd.G.COST[g], p_g[g] => psd.G.COSTLIN[g]   * psd.MVAbase),
-                                UnorderedPair(p_g[g], p_g[g]) => psd.G.COSTQUAD[g] * psd.MVAbase * psd.MVAbase, )
+            c_g[g] = QuadExpr(AffExpr(psd.G.COST[g], p_g[g] => psd.G.COSTLIN[g]   * psd.MVAbase),
+                              UnorderedPair(p_g[g], p_g[g]) => psd.G.COSTQUAD[g] * psd.MVAbase * psd.MVAbase, )
         end
     else
         # production cost (epigraph formulation)
         for g = 1:size(psd.G, 1)
             slope_gi = psd.G_epicost_slope[g]
             intercept_gi = psd.G_epicost_intercept[g]
-            @constraint(m, [i=1:length(slope_gi)],
-                        c_g[g] >= slope_gi[i]*p_g[g] + intercept_gi[i])
+            @constraint(m, [i=1:length(slope_gi)], c_g[g] >= slope_gi[i]*p_g[g] + intercept_gi[i])
         end
     end
     production_cost = @expression(m, sum(c_g[g] for g=1:nrow(psd.G)))
@@ -228,27 +220,21 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
     # base case penalty
     basecase_penalty = JuMP.GenericQuadExpr(JuMP.AffExpr(0))
     for n = 1:nrow(psd.N)
-        add_to_expression!(basecase_penalty,
-                           psd.a[:P], pslackm_n[n], pslackm_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:P], pslackm_n[n], pslackm_n[n])
         add_to_expression!(basecase_penalty, psd.b[:P], pslackm_n[n])
-        add_to_expression!(basecase_penalty,
-                           psd.a[:P], pslackp_n[n], pslackp_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:P], pslackp_n[n], pslackp_n[n])
         add_to_expression!(basecase_penalty, psd.b[:P], pslackp_n[n])
-        add_to_expression!(basecase_penalty,
-                           psd.a[:Q], qslackm_n[n], qslackm_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:Q], qslackm_n[n], qslackm_n[n])
         add_to_expression!(basecase_penalty, psd.b[:Q], qslackm_n[n])
-        add_to_expression!(basecase_penalty,
-                           psd.a[:Q], qslackp_n[n], qslackp_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:Q], qslackp_n[n], qslackp_n[n])
         add_to_expression!(basecase_penalty, psd.b[:Q], qslackp_n[n])
     end
     for l = 1:nrow(psd.L), i=1:2
-        add_to_expression!(basecase_penalty,
-                           psd.a[:S], sslack_li[l,i], sslack_li[l,i])
+        add_to_expression!(basecase_penalty, psd.a[:S], sslack_li[l,i], sslack_li[l,i])
         add_to_expression!(basecase_penalty, psd.b[:S], sslack_li[l,i])
     end
     for t = 1:nrow(psd.T), i=1:2
-        add_to_expression!(basecase_penalty,
-                           psd.a[:S], sslack_ti[t,i], sslack_ti[t,i])
+        add_to_expression!(basecase_penalty, psd.a[:S], sslack_ti[t,i], sslack_ti[t,i])
         add_to_expression!(basecase_penalty, psd.b[:S], sslack_ti[t,i])
     end
     
@@ -258,10 +244,9 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
        #  write_to_file(m, "no_cont_base_case_model.nl")
 
     else
-      #  JuMP.register(m, :recourse_f, nrow(psd.G),
-      #                recourse_f, recourse_g, recourse_H)
+      #  JuMP.register(m, :recourse_f, nrow(psd.G), recourse_f, recourse_g, recourse_H)
       #  contingency_penalty = @NLexpression(m, recourse_f(p_g...))
- #        write_to_file(m, "cont_base_case_model.nl")
+      # write_to_file(m, "cont_base_case_model.nl")
 
         # Register each function
 
@@ -298,12 +283,13 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
         @objective(m, Min, production_cost + psd.delta * basecase_penalty)
 
         # Return the complete JuMP model without solving it.
+        # reoptimize_proxdec_master! from proxdec_reuse.jl will be used to optimize and reoptimize
         return ProxDecMasterContext(m, JuMP.all_variables(m), collect(p_g), copy(JuMP.objective_function(m)),
                                     production_cost, basecase_penalty)
     else
         # Original ExaJuGO objective, unchanged.
         @NLobjective(m, Min, production_cost + psd.delta * basecase_penalty +
-            (1 - psd.delta) * contingency_penalty)
+                             (1 - psd.delta) * contingency_penalty)
 
     end
 
@@ -315,14 +301,12 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
     if JuMP.primal_status(m) != MOI.FEASIBLE_POINT &&
        JuMP.primal_status(m) != MOI.NEARLY_FEASIBLE_POINT && 
        JuMP.termination_status(m) != MOI.NEARLY_FEASIBLE_POINT
-    #    Uncomment this line of code
-        # error("solver failed to find a feasible solution.")
-        println("solver failed to find a feasible solution.")
+       error("solver failed to find a feasible solution.")
+       #println("solver failed to find a feasible solution.")
     end
     
     # objective breakdown
-    base_cost = JuMP.value(production_cost) +
-                psd.delta*JuMP.value(basecase_penalty)
+    base_cost = JuMP.value(production_cost) + psd.delta*JuMP.value(basecase_penalty)
     recourse_cost = JuMP.objective_value(m) - base_cost   
 
     # when solving the master, we need the total objective at the optimum
@@ -350,10 +334,6 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
         iters =JuMP.barrier_iterations(m)
         write_opt_status(splitdir(output_dir)[1], 
                                 "Summary.txt", "Basecase solver iteration count", string(iters))
-        # if iters > 120
-        #     write_opt_status(splitdir(output_dir)[1], 
-        #                         "Summary.txt", "", "Basecase solver took " * string(iters) * " iterations to converge.")
-        # end
 
         write_solution(output_dir, psd, solution, filename = "/Basecase_solution.txt")
 
@@ -371,22 +351,16 @@ function solve_basecase(psd::SCACOPFdata, NLSolver;
                         JuMP.value.(qslackm_n), JuMP.value.(qslackp_n),
                         JuMP.value.(sslack_li), JuMP.value.(sslack_ti))
     end
-
-    # return solution
-#    return solution
     return solution, m
-    
 end
 
 function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
-                       previous_solution::Union{Nothing,
-                                                BasecaseSolution}=nothing,
-                       quadratic_relaxation_k::Float64=Inf,
-                       minutes_since_base::Float64=1.0,
-                       use_huber_like_penalty::Bool=true,
-                       output_dir::Union{Nothing, String} = nothing,
-                       use_opt::Bool=false
-                       )::SCACOPFsolution 
+                        previous_solution::Union{Nothing, BasecaseSolution}=nothing,
+                        quadratic_relaxation_k::Float64=Inf,
+                        minutes_since_base::Float64=1.0,
+                        use_huber_like_penalty::Bool=true,
+                        output_dir::Union{Nothing, String} = nothing,
+                        use_opt::Bool=false)::SCACOPFsolution 
 
     # get primal starting point
     if use_opt
@@ -680,9 +654,9 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
                             sum( qrt for qrt in quadratic_relaxation_term)) +
                             voltages_mag_reg + voltages_ang_reg + b_sk_reg)
     else
-        voltages_mag_reg = @NLexpression(m, mag_para * sum(v_nk[n] * v_nk[n] for n=1:nrow(psd.N)))
-        voltages_ang_reg = @NLexpression(m, amg_para * sum(theta_nk[n] * theta_nk[n] for n=1:nrow(psd.N)))
-        b_sk_reg =         @NLexpression(m, b_sk_para * sum(b_sk[s] * b_sk[s] for s=1:nrow(psd.SSh)))
+        voltages_mag_reg = 0.0 #@NLexpression(m, mag_para * sum(v_nk[n] * v_nk[n] for n=1:nrow(psd.N)))
+        voltages_ang_reg = 0.0 #@NLexpression(m, amg_para * sum(theta_nk[n] * theta_nk[n] for n=1:nrow(psd.N)))
+        b_sk_reg = 0.0 #@NLexpression(m, b_sk_para * sum(b_sk[s] * b_sk[s] for s=1:nrow(psd.SSh)))
 
         @NLobjective(m, Min, production_cost + psd.delta * basecase_penalty +
                               (1-psd.delta)*(1/krow) * ( sum( cp for cp in contingency_penalty) + 
@@ -883,7 +857,8 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     @variable(m, p_gk[g=1:nrow(psd.G)], start = x0[:p_gk][g])
     @variable(m, q_gk[g=1:nrow(psd.G)], start = x0[:q_gk][g])
     # clone of first stage variable
-    @variable(m, psd.G[g,:Plb] <= p_g0[g=1:nrow(psd.G)] <= psd.G[g,:Pub], start=x0[:p_gk][g]) 
+    @variable(m, psd.G[g,:Plb] <= p_g0[g=1:nrow(psd.G)] <= psd.G[g,:Pub],
+              start=build_for_proxdec ? basecase_solution.p_g[g] : x0[:p_gk][g])
     @variable(m, pslackm_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackm_nk][n])
     @variable(m, pslackp_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackp_nk][n])
     @variable(m, qslackm_nk[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackm_nk][n])
@@ -936,7 +911,8 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     # coupling constraints (relaxed non-anticipativity)
     if quadratic_relaxation_k < Inf
         println("Using proximal quadratic relaxation for non-anticipativity")
-        @variable(m, aux_slack_gk[g=1:nrow(psd.G)])
+        @variable(m, aux_slack_gk[g=1:nrow(psd.G)],
+                  start = build_for_proxdec ? 0.0 : x0[:p_gk][g] - basecase_solution.p_g[g])
         @constraint(m, non_anticipativity_con[g=1:nrow(psd.G)], p_g0[g] - basecase_solution.p_g[g] == aux_slack_gk[g])
     else
         println("Using exact non-anticipativity (no proximal quadratic relaxation)") 
@@ -1052,6 +1028,7 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
         end
 
         # Return model and JuMP objects WITHOUT optimize!.
+        # reoptimize_proxdec_contingency! from proxdec_reuse will be used to optimize and reoptimize
         return ProxDecContingencyContext(m, JuMP.all_variables(m), collect(p_g0), collect(p_gk),
                                          collect(aux_slack_gk), collect(non_anticipativity_con),
                                          contingency_penalty, (voltages_mag_reg, voltages_ang_reg, b_sk_reg),
@@ -1084,7 +1061,7 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     
     # compute gradient/subgradient
     if quadratic_relaxation_k < Inf
-        obj_grad = 2 * quadratic_relaxation_k * (basecase_solution.p_g[g] - JuMP.value.(p_g0))
+        obj_grad = 2 * quadratic_relaxation_k * (basecase_solution.p_g .- JuMP.value.(p_g0))
     else
         if has_duals(m)
             obj_grad = JuMP.dual.(non_anticipativity_con)

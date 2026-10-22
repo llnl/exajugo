@@ -105,9 +105,32 @@ t4 = @elapsed p2 = reoptimize_proxdec_contingency!(ctx, base.p_g, 0.8 * lambda, 
 @test isapprox(p2.envelope, omega * p2.solver_objective; rtol=1e-6, atol=1e-5)
 @test ctx.model === cont_model
 @test JuMP.num_variables(ctx.model) == cont_nvars
-
 println("Contingency times: ", t3, " / ", t4)
 println("Proximal displacement: ", maximum(abs.(p1.displacement)))
 println("Envelope: ", p1.envelope)
 println("Gradient infinity norm: ", maximum(abs.(p1.grad_p)))
+
+# ----------------------------------------------------------
+# 4. Test all contingencies
+# ----------------------------------------------------------
+
+@testset "All ProxDec contingencies" begin
+    for k in 1:size(psd.K, 1)
+        println("Testing contingency $k")
+        cctx = solve_contingency(psd, k, base, opt;
+                                 quadratic_relaxation_k = 1.0 / (2.0 * lambda * omega),
+                                 use_huber_like_penalty = true, build_for_proxdec = true)
+
+        r = reoptimize_proxdec_contingency!(cctx, base.p_g, lambda, omega)
+
+        @test isfinite(r.envelope)
+        @test all(isfinite, r.grad_p)
+        @test r.coupling_residual < 1e-5
+        @test isapprox(r.envelope, omega * r.solver_objective; atol=1e-5, rtol=1e-6)
+
+        println("  Envelope: ", r.envelope)
+        println("  Displacement infinity norm: ", maximum(abs.(r.displacement)))
+    end
+end
+
 println("\nProxDec reusable-model smoke test passed.")
