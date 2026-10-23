@@ -1,4 +1,3 @@
-
 # Reusable JuMP models for ProxDec.
 #
 # Included by SCACOPFSubproblems.jl after CoreJuGO

@@ -373,28 +373,22 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
     m = Model(NLSolver)
 
     # base case variables
-    @variable(m, psd.N[n,:Vlb] <= v_n[n=1:nrow(psd.N)] <= psd.N[n,:Vub],
-              start=x0[:v_n][n])
+    @variable(m, psd.N[n,:Vlb] <= v_n[n=1:nrow(psd.N)] <= psd.N[n,:Vub], start=x0[:v_n][n])
     @variable(m, theta_n[n=1:nrow(psd.N)], start=x0[:theta_n][n])
     @variable(m, p_li[l=1:nrow(psd.L), i=1:2], start=x0[:p_li][l,i])
     @variable(m, q_li[l=1:nrow(psd.L), i=1:2], start=x0[:q_li][l,i])
     @variable(m, p_ti[t=1:nrow(psd.T), i=1:2], start=x0[:p_ti][t,i])
     @variable(m, q_ti[t=1:nrow(psd.T), i=1:2], start=x0[:q_ti][t,i])
-    @variable(m, psd.SSh[s,:Blb] <= b_s[s=1:nrow(psd.SSh)] <=
-              psd.SSh[s,:Bub], start=x0[:b_s][s])
-    @variable(m, psd.G[g,:Plb] <= p_g[g=1:nrow(psd.G)] <= psd.G[g,:Pub],
-              start=x0[:p_g][g])
-    @variable(m, psd.G[g,:Qlb] <= q_g[g=1:nrow(psd.G)] <= psd.G[g,:Qub],
-              start=x0[:q_g][g])
+    @variable(m, psd.SSh[s,:Blb] <= b_s[s=1:nrow(psd.SSh)] <= psd.SSh[s,:Bub], start=x0[:b_s][s])
+    @variable(m, psd.G[g,:Plb] <= p_g[g=1:nrow(psd.G)] <= psd.G[g,:Pub], start=x0[:p_g][g])
+    @variable(m, psd.G[g,:Qlb] <= q_g[g=1:nrow(psd.G)] <= psd.G[g,:Qub], start=x0[:q_g][g])
     @variable(m, c_g[g=1:nrow(psd.G)], start=x0[:c_g][g])
     @variable(m, pslackm_n[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackm_n][n])
     @variable(m, pslackp_n[n=1:size(psd.N, 1)] >= 0, start = x0[:pslackp_n][n])
     @variable(m, qslackm_n[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackm_n][n])
     @variable(m, qslackp_n[n=1:size(psd.N, 1)] >= 0, start = x0[:qslackp_n][n])
-    @variable(m, sslack_li[l=1:nrow(psd.L), i=1:2] >= 0,
-              start=x0[:sslack_li][l,i])
-    @variable(m, sslack_ti[t=1:nrow(psd.T), i=1:2] >= 0,
-              start=x0[:sslack_ti][t,i])
+    @variable(m, sslack_li[l=1:nrow(psd.L), i=1:2] >= 0, start=x0[:sslack_li][l,i])
+    @variable(m, sslack_ti[t=1:nrow(psd.T), i=1:2] >= 0, start=x0[:sslack_ti][t,i])
 
     # fix angle at reference bus to zero
     JuMP.fix(theta_n[psd.RefBus], 0.0, force=true)
@@ -408,16 +402,15 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
         c_g = Vector{JuMP.QuadExpr}(undef, size(psd.G, 1))
         # production cost (continous quadratic formulation)
         for g = 1:size(psd.G, 1)
-            c_g[g] = QuadExpr( AffExpr(psd.G.COST[g], p_g[g] => psd.G.COSTLIN[g]   * psd.MVAbase),
-                                UnorderedPair(p_g[g], p_g[g]) => psd.G.COSTQUAD[g] * psd.MVAbase * psd.MVAbase, )
+            c_g[g] = QuadExpr(AffExpr(psd.G.COST[g], p_g[g] => psd.G.COSTLIN[g]   * psd.MVAbase),
+                              UnorderedPair(p_g[g], p_g[g]) => psd.G.COSTQUAD[g] * psd.MVAbase * psd.MVAbase, )
         end
     else
         # production cost (epigraph formulation)
         for g = 1:size(psd.G, 1)
             slope_gi = psd.G_epicost_slope[g]
             intercept_gi = psd.G_epicost_intercept[g]
-            @constraint(m, [i=1:length(slope_gi)],
-                        c_g[g] >= slope_gi[i]*p_g[g] + intercept_gi[i])
+            @constraint(m, [i=1:length(slope_gi)], c_g[g] >= slope_gi[i]*p_g[g] + intercept_gi[i])
         end
     end
     production_cost = @expression(m, sum(c_g[g] for g=1:nrow(psd.G)))
@@ -425,27 +418,21 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
     # base case penalty
     basecase_penalty = JuMP.GenericQuadExpr(JuMP.AffExpr(0))
     for n = 1:nrow(psd.N)
-        add_to_expression!(basecase_penalty,
-                           psd.a[:P], pslackm_n[n], pslackm_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:P], pslackm_n[n], pslackm_n[n])
         add_to_expression!(basecase_penalty, psd.b[:P], pslackm_n[n])
-        add_to_expression!(basecase_penalty,
-                           psd.a[:P], pslackp_n[n], pslackp_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:P], pslackp_n[n], pslackp_n[n])
         add_to_expression!(basecase_penalty, psd.b[:P], pslackp_n[n])
-        add_to_expression!(basecase_penalty,
-                           psd.a[:Q], qslackm_n[n], qslackm_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:Q], qslackm_n[n], qslackm_n[n])
         add_to_expression!(basecase_penalty, psd.b[:Q], qslackm_n[n])
-        add_to_expression!(basecase_penalty,
-                           psd.a[:Q], qslackp_n[n], qslackp_n[n])
+        add_to_expression!(basecase_penalty, psd.a[:Q], qslackp_n[n], qslackp_n[n])
         add_to_expression!(basecase_penalty, psd.b[:Q], qslackp_n[n])
     end
     for l = 1:nrow(psd.L), i=1:2
-        add_to_expression!(basecase_penalty,
-                          psd.a[:S], sslack_li[l,i], sslack_li[l,i])
+        add_to_expression!(basecase_penalty, psd.a[:S], sslack_li[l,i], sslack_li[l,i])
         add_to_expression!(basecase_penalty, psd.b[:S], sslack_li[l,i])
     end
     for t = 1:nrow(psd.T), i=1:2
-        add_to_expression!(basecase_penalty,
-                          psd.a[:S], sslack_ti[t,i], sslack_ti[t,i])
+        add_to_expression!(basecase_penalty, psd.a[:S], sslack_ti[t,i], sslack_ti[t,i])
         add_to_expression!(basecase_penalty, psd.b[:S], sslack_ti[t,i])
     end
 
@@ -501,10 +488,8 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
     @variable(m, sslack_tik[t=1:nrow(psd.T), i=1:2, k=1:nrow(psd.K)])
 
     # contingency variables constraint
-    @constraint(m, [n=1:nrow(psd.N), k = 1:nrow(psd.K)], psd.N[n,:EVlb] <= v_nk[n, k] <= 
-            psd.N[n,:EVub])
-    @constraint(m, [s=1:nrow(psd.SSh), k = 1:nrow(psd.K)], psd.SSh[s,:Blb] <= b_sk[s, k] <=
-            psd.SSh[s,:Bub])
+    @constraint(m, [n=1:nrow(psd.N), k = 1:nrow(psd.K)], psd.N[n,:EVlb] <= v_nk[n, k] <= psd.N[n,:EVub])
+    @constraint(m, [s=1:nrow(psd.SSh), k = 1:nrow(psd.K)], psd.SSh[s,:Blb] <= b_sk[s, k] <= psd.SSh[s,:Bub])
     @constraint(m, [n=1:size(psd.N, 1), k = 1:nrow(psd.K)], pslackm_nk[n, k] >= 0)
     @constraint(m, [n=1:size(psd.N, 1), k = 1:nrow(psd.K)], pslackp_nk[n, k] >= 0)
     @constraint(m, [n=1:size(psd.N, 1), k = 1:nrow(psd.K)], qslackm_nk[n, k] >= 0)
@@ -517,15 +502,20 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
 
     for k = 1:nrow(psd.K)
         # create generic contingency object
-        con = GenericContingency(psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Generator)], 
-                                 psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Line)], 
-                                 psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Transformer)])
+        con_ids = GenericContingency(psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Generator)], 
+                                     psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Line)], 
+                                     psd.K[k,:IDout][findall(psd.K[k,:ConType][:] .== :Transformer)])
+        # Seems there is some mismatch between the indeces of out equipement in GenericContingency
+        # previous N-1 contingency code: GenericContingency uses global ids while some constraints
+        # here expect within-model/row indexes
 
+        # another contingency data strcuture that uses local/row ids
+        con_rows = proxdec_contingency(psd, k)
 
         if use_opt
-            x0 = get_primal_starting_point(psd, con, opt = NLSolver)
+            x0 = get_primal_starting_point(psd, con_ids, opt = NLSolver)
         else
-            x0 = get_primal_starting_point(psd, con)
+            x0 = get_primal_starting_point(psd, con_ids)
         end
 
         # contingency variables starting values
@@ -561,30 +551,45 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
         end
 
         # add power flow constraints
-        addpowerflowcons!(m, v_nk[:,k], theta_nk[:,k], p_lik[:,:,k], q_lik[:,:,k], p_tik[:,:,k], 
-                        q_tik[:,:,k], b_sk[:,k],
-                        p_gk[:,k], q_gk[:,k], pslackm_nk[:,k], pslackp_nk[:,k], qslackm_nk[:,k],
-                        qslackp_nk[:,k], sslack_lik[:,:,k], sslack_tik[:,:,k], psd, con)
+        addpowerflowcons!(m, v_nk[:,k], theta_nk[:,k], p_lik[:,:,k], q_lik[:,:,k], p_tik[:,:,k], q_tik[:,:,k],
+                          b_sk[:,k], p_gk[:,k], q_gk[:,k], pslackm_nk[:,k], pslackp_nk[:,k], qslackm_nk[:,k],
+                          qslackp_nk[:,k], sslack_lik[:,:,k], sslack_tik[:,:,k], psd, con_rows)
 
         # ramp rate constraints
-        Gonline = if length(con.generators_out)>0 setdiff(1:nrow(psd.G), con.generators_out)
-                else 1:nrow(psd.G)
-                end
-                
-        @constraint(m, [g in Gonline], psd.G[g,:Plb] <= p_gk[g, k] <= psd.G[g,:Pub])
-        @constraint(m, [g in Gonline], psd.G[g,:Qlb] <= q_gk[g, k] <= psd.G[g,:Qub])
-        @constraint(m, [g in Gonline], p_gk[g, k] - p_g[g] <=
-                                    psd.G[g, :Pub] * psd.G[g, :RampRate] * minutes_since_base)
-        @constraint(m, [g in Gonline], p_g[g] - p_gk[g, k] <=
-                                    psd.G[g, :Pub] * psd.G[g, :RampRate] * minutes_since_base)
-
-        # enforce out of service generators
-        if length(con.generators_out) > 0
-            for congo in con.generators_out
-                JuMP.fix.(p_gk[findall(psd.G[!, :Generator] .== congo), k], 0.0, force=true)
-                JuMP.fix.(q_gk[findall(psd.G[!, :Generator] .== congo), k], 0.0, force=true)
-            end
+        Gonline = setdiff(1:nrow(psd.G), con_rows.generators_out)
+        @constraint(m, [g in Gonline], psd.G[g,:Plb] <= p_gk[g,k] <= psd.G[g,:Pub])
+        @constraint(m, [g in Gonline], psd.G[g,:Qlb] <= q_gk[g,k] <= psd.G[g,:Qub])
+        @constraint(m, [g in Gonline], p_gk[g,k] - p_g[g] <= psd.G[g,:Pub] * psd.G[g,:RampRate] * minutes_since_base)
+        @constraint(m, [g in Gonline], p_g[g] - p_gk[g,k] <= psd.G[g,:Pub] * psd.G[g,:RampRate] * minutes_since_base)
+        # Fix precisely the outaged generator rows.
+        for g in con_rows.generators_out
+            JuMP.fix(p_gk[g,k], 0.0; force=true)
+            JuMP.fix(q_gk[g,k], 0.0; force=true)
         end
+
+        # 
+        # Verify the constructed contingency model.
+        #
+        for g in con_rows.generators_out
+            @assert !(g in Gonline)
+            @assert JuMP.is_fixed(p_gk[g,k])
+            @assert JuMP.is_fixed(q_gk[g,k])
+            @assert JuMP.fix_value(p_gk[g,k]) == 0.0
+        end
+
+        for l in con_rows.lines_out, i in 1:2
+            @assert JuMP.is_fixed(p_lik[l,i,k])
+            @assert JuMP.is_fixed(q_lik[l,i,k])
+            @assert JuMP.is_fixed(sslack_lik[l,i,k])
+        end
+
+        for t in con_rows.transformers_out, i in 1:2
+            @assert JuMP.is_fixed(p_tik[t,i,k])
+            @assert JuMP.is_fixed(q_tik[t,i,k])
+            @assert JuMP.is_fixed(sslack_tik[t,i,k])
+        end
+
+        println("Verified outage constraints for contingency $k: ", psd.K[k, :Label])        
 
         # contingency penalty
         if !use_huber_like_penalty
