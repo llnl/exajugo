@@ -133,4 +133,74 @@ println("Gradient infinity norm: ", maximum(abs.(p1.grad_p)))
     end
 end
 
+
+# ----------------------------------------------------------
+# 5. Test all contingencies and screen critical scenarios
+# ----------------------------------------------------------
+
+using Printf
+screening = NamedTuple[]
+
+@testset "All ProxDec contingencies screening" begin
+    for k in 1:size(psd.K, 1)
+        label = string(psd.K[k, :Label])
+
+        cctx = solve_contingency(psd, k, base, opt;
+            quadratic_relaxation_k = 1.0 / (2.0 * lambda * omega),
+            use_huber_like_penalty = true, build_for_proxdec = true)
+
+        elapsed = @elapsed r = reoptimize_proxdec_contingency!(cctx, base.p_g, lambda, omega)
+
+        # Unweighted objective breakdown:
+        # P_k + R_k + kappa * ||z - p||^2
+        penalty = r.penalty
+        reg = r.regularization
+        prox_quad = r.kappa * sum(abs2, r.displacement)
+        total = penalty + reg + prox_quad
+
+        @test isfinite(penalty)
+        @test isfinite(reg)
+        @test isfinite(prox_quad)
+        @test isfinite(r.envelope)
+        @test all(isfinite, r.grad_p)
+        @test r.coupling_residual < 1e-5
+
+        @test isapprox(total, r.solver_objective; atol=1e-5, rtol=1e-6)
+
+        @test isapprox(r.envelope, omega * total; atol=1e-5, rtol=1e-6)
+
+        row = (k = k, label = label, penalty = penalty, regularization = reg,
+               proximal = prox_quad, total = total, weighted_penalty = omega * penalty,
+               envelope = r.envelope, step_inf = maximum(abs.(r.displacement)), time = elapsed)
+
+        push!(screening, row)
+
+        @printf("\nContingency %d: %s\n", k, label)
+        @printf("  Technical penalty  P_k       = %14.6e\n", penalty)
+        @printf("  Other regularization R_k      = %14.6e\n", reg)
+        @printf("  Proximal quadratic            = %14.6e\n", prox_quad)
+        @printf("  Total NLP objective           = %14.6e\n", total)
+        @printf("  Weighted penalty omega*P_k    = %14.6e\n", omega * penalty)
+        @printf("  Weighted envelope             = %14.6e\n", r.envelope)
+        @printf("  Proximal displacement inf     = %14.6e\n", row.step_inf)
+        @printf("  NLP solve time                = %10.3f s\n", elapsed)
+    end
+end
+
+# Rank scenarios by technical-violation penalty.
+sort!(screening; by = r -> r.penalty, rev = true)
+
+println("\nContingency screening (sorted by penalty)")
+@printf("%4s %-45s %12s %12s %12s %12s\n",
+        "k", "Label", "Penalty", "Other reg.",
+        "Prox quad.", "Envelope")
+
+for r in screening
+    @printf("%4d %-45s %12.4e %12.4e %12.4e %12.4e\n",
+            r.k, first(r.label, min(length(r.label), 45)),
+            r.penalty, r.regularization,
+            r.proximal, r.envelope)
+end
+
+
 println("\nProxDec reusable-model smoke test passed.")
