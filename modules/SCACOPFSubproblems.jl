@@ -879,12 +879,16 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
     for n in psd.Con_RefBus[cont_idx]
          JuMP.fix(theta_nk[n], 0.0; force=true)
     end  
-    
+
+    # --- dirty fix ---
+    # Power-flow constraints require model-local equipment rows. For listed contingencies, these rows
+    # are obtained from from psd.K. We keep 'con' unchanged for initialization and legacy metadata.
+    con_pf = isnothing(cont_idx) ? con : proxdec_contingency(psd, cont_idx)
+
     # add power flow constraints
     addpowerflowcons!(m, v_nk, theta_nk, p_lik, q_lik, p_tik, q_tik, b_sk,
                       p_gk, q_gk, pslackm_nk, pslackp_nk, qslackm_nk,
-                      qslackp_nk, sslack_lik, sslack_tik, psd, con)
-    
+                      qslackp_nk, sslack_lik, sslack_tik, psd, con_pf)
     # ramp rate constraints
     # convert generator-outage indices to model-local rows.
     g_out_rows = Int[]

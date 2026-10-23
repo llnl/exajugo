@@ -1,6 +1,7 @@
 using Test
 using JuMP
 using Ipopt
+using Printf
 
 pushfirst!(LOAD_PATH, joinpath(@__DIR__, "modules"))
 using SCACOPFSubproblems
@@ -19,7 +20,8 @@ psd = SCACOPFdata(raw_filename=raw, rop_filename=rop, con_filename=con)
 @show size(psd.G, 1)
 @show size(psd.K, 1)
 
-@test size(psd.K, 1) == 3
+lambda = 1.0e-3
+omega = (1.0 - psd.delta) / size(psd.K, 1)
 
 opt = optimizer_with_attributes(Ipopt.Optimizer, "print_level" => 0, "max_iter" => 1000, "tol" => 1e-7)
 
@@ -82,9 +84,6 @@ println("Master objectives: ", r1.master_value, " / ", r2.master_value)
 
 println("\nBuilding ProxDec contingency ...")
 
-lambda = 1.0e-3
-omega = (1.0 - psd.delta) / size(psd.K, 1)
-
 ctx = solve_contingency(psd, 1, base, opt;
                         quadratic_relaxation_k= 1.0 / (2.0 * lambda * omega),
                         use_huber_like_penalty=true, build_for_proxdec=true)
@@ -137,8 +136,6 @@ end
 # ----------------------------------------------------------
 # 5. Test all contingencies and screen critical scenarios
 # ----------------------------------------------------------
-
-using Printf
 screening = NamedTuple[]
 
 @testset "All ProxDec contingencies screening" begin
@@ -146,8 +143,8 @@ screening = NamedTuple[]
         label = string(psd.K[k, :Label])
 
         cctx = solve_contingency(psd, k, base, opt;
-            quadratic_relaxation_k = 1.0 / (2.0 * lambda * omega),
-            use_huber_like_penalty = true, build_for_proxdec = true)
+                                 quadratic_relaxation_k = 1.0 / (2.0 * lambda * omega),
+                                 use_huber_like_penalty = true, build_for_proxdec = true)
 
         elapsed = @elapsed r = reoptimize_proxdec_contingency!(cctx, base.p_g, lambda, omega)
 
@@ -202,5 +199,36 @@ for r in screening
             r.proximal, r.envelope)
 end
 
+# ----------------------------------------------------------
+# 6. Test standalone contingencies 
+# ----------------------------------------------------------
+
+@testset "Standalone fixed-dispatch contingencies" begin
+    for k in 1:size(psd.K, 1)
+        println("\nSolving fixed-dispatch contingency $k: ", psd.K[k, :Label])
+
+        # Expected model-local outage indices.
+        con = proxdec_contingency(psd, k)
+
+        # Original, non-ProxDec solve.
+        sol = solve_contingency(psd, k, base, opt; quadratic_relaxation_k = Inf, use_huber_like_penalty = true)
+
+        @test isfinite(sol.cont_cost)
+        @test all(isfinite, sol.p_g)
+        @test sol.cont_Kidx == k
+        @test sol.cont_idout == psd.K[k, :IDout]
+
+        # Outaged generator dispatch must be zero.
+        for g in con.generators_out
+            @test abs(sol.p_g[g]) <= 1e-6
+            @test abs(sol.q_g[g]) <= 1e-6
+        end
+
+        println("  Contingency objective: ", sol.cont_cost)
+        println("  Outaged generator rows: ", con.generators_out)
+        println("  Outaged line rows: ", con.lines_out)
+        println("  Outaged transformer rows: ", con.transformers_out)
+    end
+end
 
 println("\nProxDec reusable-model smoke test passed.")
