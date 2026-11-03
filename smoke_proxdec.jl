@@ -79,6 +79,68 @@ println("Master times: ", t1, " / ", t2)
 println("Master objectives: ", r1.master_value, " / ", r2.master_value)
 
 # ------------------------------------------------------
+# 2b. Reusable master with diagonal stabilization
+# ------------------------------------------------------
+
+@testset "Reusable diagonal ProxDec master" begin
+
+    n = length(master.vars)
+    xc = copy(r2.x)
+    g = copy(grad2)
+
+    # First verify backward compatibility:
+    # scalar alpha vs. uniform diagonal alpha.
+    gamma = 0.2
+    D_uniform = fill(gamma, n)
+
+    rs = reoptimize_proxdec_master!(master, xc, g, gamma)
+
+    rv = reoptimize_proxdec_master!(master, xc, g, D_uniform)
+
+    @test isapprox(rs.master_value, rv.master_value; rtol=1e-6, atol=1e-3)
+
+    # Test genuinely nonuniform stabilization.
+    D = fill(gamma, n)
+
+    D[dispatch_idx[1]] = 0.7
+    D[dispatch_idx[end]] = 0.4
+
+    rd = reoptimize_proxdec_master!(master, xc, g, D)
+
+    @test isfinite(rd.master_value)
+    @test all(isfinite, rd.x)
+
+    # Confirm same model and variable count.
+    @test master.model === master_model
+    @test JuMP.num_variables(master.model) == nvars
+
+    # Check that the actual JuMP objective contains
+    # the requested diagonal and linear coefficients.
+    Q = JuMP.objective_function(master.model)
+    Q0 = master.base_objective
+
+    for j in (1, dispatch_idx[1], dispatch_idx[end])
+        v = master.vars[j]
+        quad_added = JuMP.coefficient(Q, v, v) - JuMP.coefficient(Q0, v, v)
+        linear_added = JuMP.coefficient(Q, v) - JuMP.coefficient(Q0, v)
+        @test isapprox(quad_added, D[j]; atol=1e-8, rtol=1e-10)
+        @test isapprox(linear_added, g[j] - 2.0 * D[j] * xc[j]; atol=1e-7, rtol=1e-10)
+    end
+
+    # The JuMP objective omits the center-dependent
+    # constants of the stabilized master model.
+    offset = -sum(g .* xc) + sum(D .* abs2.(xc))
+
+    reconstructed = rd.objective + offset
+    @test isapprox(rd.master_value, reconstructed; atol=1e-4, rtol=1e-7)
+
+    println("Diagonal master objective: OK")
+    println("  Dimension: ", n)
+    println("  Diagonal range: ", extrema(D))
+    println("  Master value: ", rd.master_value)
+end
+
+# ------------------------------------------------------
 # 3. Reusable contingency
 # ------------------------------------------------------
 

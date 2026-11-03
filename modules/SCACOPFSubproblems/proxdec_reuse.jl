@@ -118,49 +118,65 @@ end
 #       + alpha*||y-xcenter||^2
 #   s.t. base ACOPF constraints
 #
+# alpha::Real   -> D[j] = alpha for every j
+# alpha::Vector -> D[j] = alpha[j]
+#
 # No network constraints or JuMP variables are recreated.
-function reoptimize_proxdec_master!(ctx::ProxDecMasterContext,
-                                    xcenter::AbstractVector{<:Real},
+#
+function reoptimize_proxdec_master!(ctx::ProxDecMasterContext, xcenter::AbstractVector{<:Real},
                                     g::AbstractVector{<:Real},
-                                    alpha::Real;
-                                    warm_start::Bool=true)
+                                    alpha::Union{Real,AbstractVector{<:Real}}; warm_start::Bool=true)
     n = length(ctx.vars)
     length(xcenter) == n || throw(DimensionMismatch("Invalid master center"))
-    length(g) == n || throw(DimensionMismatch("Invalid master gradient"))
-    isfinite(alpha) && alpha > 0 || error("alpha must be positive and finite")
-    all(isfinite, xcenter) || error("Nonfinite master center")
-    all(isfinite, g) || error("Nonfinite master gradient")
+    length(g) == n || throw(DimensionMismatch("Invalid master gradient size"))
+
+    # Convert scalar or vector stabilization to a diagonal.
+    D = if alpha isa Real
+        fill(Float64(alpha), n)
+    else
+        length(alpha) == n ||
+            throw(DimensionMismatch("Expected $n stabilization coefficients, " * "received $(length(alpha))"))
+        Float64.(alpha)
+    end
+
+    all(isfinite, xcenter) || throw(ArgumentError("Nonfinite master center"))
+    all(isfinite, g) || throw(ArgumentError("Nonfinite master gradient"))
+    all(d -> isfinite(d) && d >= 0.0, D) ||
+        throw(ArgumentError("Diagonal stabilization must be finite and positive"))
 
     m = ctx.model
 
-    # This must happen BEFORE changing the objective.
+    # Save previous NLP solution as the new starting point (before changing the objective)
     warm_start && _proxdec_warm_start!(m)
-    obj = copy(ctx.base_objective)
-    for j in eachindex(ctx.vars)
-        v = ctx.vars[j]
-        # alpha * y[j]^2
-        JuMP.add_to_expression!(obj, Float64(alpha), v, v)
-        # (g[j] - 2*alpha*xcenter[j]) * y[j]
-        coeff = g[j] - 2 * alpha * xcenter[j]
 
+    # Start from the original smooth ACOPF objective.
+    obj = copy(ctx.base_objective)
+
+    for j in 1:n
+        v = ctx.vars[j]
+        # Diagonal quadratic: D[j] * y[j]^2
+        if D[j] != 0
+            JuMP.add_to_expression!(obj, D[j], v, v)
+        end
+        # Linear term: (g[j] - 2*D[j]*xcenter[j])*y[j]
+        coeff = g[j] - 2.0 * D[j] * xcenter[j]
         JuMP.add_to_expression!(obj, Float64(coeff), v)
     end
 
+    # Update only the objective; reuse network constraints.
     JuMP.set_objective_function(m, obj)
-    JuMP.optimize!(m)
 
+    JuMP.optimize!(m)
     _proxdec_check_status(m)
 
     y = JuMP.value.(ctx.vars)
 
-    # The base-objective expression excludes ProxDec terms,
-    # and is the authoritative smooth objective.
+    # Evaluate original smooth objective, without the ProxDec stabilization terms.
     f0 = JuMP.value(ctx.base_objective)
-
     step = y .- xcenter
+    quadratic_term = sum(D[j] * abs2(step[j]) for j in 1:n)
 
-    master_value = f0 + sum(g[j] * step[j] for j in eachindex(step)) +
-                   alpha * sum(abs2, step)
+    master_value = f0 + sum(g[j] * step[j] for j in 1:n) + quadratic_term
 
     return (x = y, base_value = f0, master_value = master_value,
             objective = JuMP.objective_value(m), step_inf = maximum(abs.(step)),
