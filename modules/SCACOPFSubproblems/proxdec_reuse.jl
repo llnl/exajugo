@@ -149,6 +149,17 @@ function reoptimize_proxdec_master!(ctx::ProxDecMasterContext, xcenter::Abstract
     # Save previous NLP solution as the new starting point (before changing the objective)
     warm_start && _proxdec_warm_start!(m)
 
+    # Experimental: restore the accepted PETRA center
+    # as Ipopt's primal warm start.
+    for (j, v) in enumerate(ctx.vars)
+        JuMP.set_start_value(v, Float64(xcenter[j]))
+    end
+
+    if warm_start
+        start_gap = maximum(abs(something(JuMP.start_value(v), NaN) - xcenter[j]) for (j, v) in enumerate(ctx.vars))
+        Printf.@printf("MASTER START: distance_from_center=%.6e\n", start_gap)
+    end
+
     # Start from the original smooth ACOPF objective.
     obj = copy(ctx.base_objective)
 
@@ -166,6 +177,13 @@ function reoptimize_proxdec_master!(ctx::ProxDecMasterContext, xcenter::Abstract
     # Update only the objective; reuse network constraints.
     JuMP.set_objective_function(m, obj)
 
+    JuMP.set_optimizer_attribute(m, "mu_strategy", "monotone")
+    JuMP.set_optimizer_attribute(m, "mu_init", 1e-5)
+
+    for opt in ("bound_push", "bound_frac", "slack_bound_push", "slack_bound_frac")
+        JuMP.set_optimizer_attribute(m, opt, 1e-6)
+    end
+
     JuMP.optimize!(m)
     _proxdec_check_status(m)
 
@@ -177,6 +195,26 @@ function reoptimize_proxdec_master!(ctx::ProxDecMasterContext, xcenter::Abstract
     quadratic_term = sum(D[j] * abs2(step[j]) for j in 1:n)
 
     master_value = f0 + sum(g[j] * step[j] for j in 1:n) + quadratic_term
+
+    # Evaluate both formulations at the PETRA center and trial.
+    idx = Dict(v => j for (j, v) in enumerate(ctx.vars))
+
+    f_center = JuMP.value(v -> xcenter[idx[v]], ctx.base_objective)
+
+    obj = JuMP.objective_function(m)
+    obj_center = JuMP.value(v -> xcenter[idx[v]], obj)
+    obj_trial = JuMP.objective_value(m)
+
+    pred_reconstructed = f_center - master_value
+    pred_jump = obj_center - obj_trial
+
+    if pred_reconstructed < 0
+        Printf.@printf("MASTER NO DESCENT: reconstructed=%+.9e JuMP=%+.9e discrepancy=%+.3e\n",
+                       pred_reconstructed, pred_jump, pred_reconstructed - pred_jump)
+
+        println("Master termination: ", JuMP.termination_status(m))
+        println("Master primal:      ", JuMP.primal_status(m))
+    end
 
     return (x = y, base_value = f0, master_value = master_value,
             objective = JuMP.objective_value(m), step_inf = maximum(abs.(step)),

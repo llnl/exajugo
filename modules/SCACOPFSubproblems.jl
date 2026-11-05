@@ -369,6 +369,8 @@ function solve_SC_ACOPF(psd::SCACOPFdata, NLSolver;
         x0 = get_primal_starting_point(psd, previous_solution)
     end
 
+    println("solve_SC_ACOPF: minutes_since_base=", minutes_since_base)
+
     # create model
     m = Model(NLSolver)
 
@@ -794,6 +796,8 @@ function solve_contingency(psd::SCACOPFdata, k::Int,
                             psd.K[k, :IDout][findall(psd.K[k, :ConType][:] .== :Transformer)])
     end
 
+    println("solve_contingency: minutes_since_base=", minutes_since_base)
+
     result = solve_contingency(psd, con, basecase_solution, NLSolver;
                                previous_solution=previous_solution, quadratic_relaxation_k=quadratic_relaxation_k,
                                minutes_since_base=minutes_since_base, use_huber_like_penalty=use_huber_like_penalty,
@@ -828,6 +832,8 @@ function solve_contingency(psd::SCACOPFdata, con::GenericContingency,
         isfinite(quadratic_relaxation_k) || error("ProxDec requires a finite quadratic coefficient")
         isnothing(cont_idx) && error("ProxDec currently requires a listed contingency")
     end
+
+    println("solve_contingency2: minutes_since_base=", minutes_since_base)
 
     #
     # get primal starting point
@@ -1159,7 +1165,9 @@ function solve_random_contingency(psd::SCACOPFdata, n_failures::Int,
     # NOTE: this function draws uniformly from all failures with less than n_failures,
     # assuming that each element has independent failure bernoulli distribution; it does this by
     # sampling from a conditional binomial distribution.
-    
+
+    println("solve_random_contingency: minutes_since_base=", minutes_since_base)
+
     # solve and return solution (solution struct contains information about the generated solution
     return solve_contingency(psd, con, basecase_solution, NLSolver,
                              previous_solution=previous_solution,
