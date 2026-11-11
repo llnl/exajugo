@@ -149,15 +149,29 @@ function reoptimize_proxdec_master!(ctx::ProxDecMasterContext, xcenter::Abstract
     # Save previous NLP solution as the new starting point (before changing the objective)
     warm_start && _proxdec_warm_start!(m)
 
-    # Experimental: restore the accepted PETRA center
-    # as Ipopt's primal warm start.
-    for (j, v) in enumerate(ctx.vars)
-        JuMP.set_start_value(v, Float64(xcenter[j]))
+    start_mode = get(ENV, "SCACOPF_MASTER_START", "center")
+    start_mode in ("center", "previous", "center-verbose") || error("Invalid SCACOPF_MASTER_START=$start_mode")
+    if start_mode == "center" || start_mode == "center-verbose"
+        for (j, v) in enumerate(ctx.vars)
+            JuMP.set_start_value(v, Float64(xcenter[j]))
+        end
     end
-
+    
+    if warm_start && JuMP.has_values(m)
+        # Reuse the previous master NLP solution.
+        _proxdec_warm_start!(m)
+    else
+        # Fallback when no previous solution exists.
+        for (j, v) in enumerate(ctx.vars)
+            JuMP.set_start_value(v, Float64(xcenter[j]))
+        end
+    end
+    
     if warm_start
-        start_gap = maximum(abs(something(JuMP.start_value(v), NaN) - xcenter[j]) for (j, v) in enumerate(ctx.vars))
-        Printf.@printf("MASTER START: distance_from_center=%.6e\n", start_gap)
+        if start_mode == "center-verbose"
+            start_gap = maximum(abs(something(JuMP.start_value(v), NaN) - xcenter[j]) for (j, v) in enumerate(ctx.vars))
+            Printf.@printf("MASTER START: distance_from_center=%.6e\n", start_gap)
+        end
     end
 
     # Start from the original smooth ACOPF objective.
@@ -209,11 +223,13 @@ function reoptimize_proxdec_master!(ctx::ProxDecMasterContext, xcenter::Abstract
     pred_jump = obj_center - obj_trial
 
     if pred_reconstructed < 0
-        Printf.@printf("MASTER NO DESCENT: reconstructed=%+.9e JuMP=%+.9e discrepancy=%+.3e\n",
-                       pred_reconstructed, pred_jump, pred_reconstructed - pred_jump)
+        if start_mode == "center-verbose"
+            Printf.@printf("MASTER NO DESCENT: reconstructed=%+.9e JuMP=%+.9e discrepancy=%+.3e\n",
+                           pred_reconstructed, pred_jump, pred_reconstructed - pred_jump)
 
-        println("Master termination: ", JuMP.termination_status(m))
-        println("Master primal:      ", JuMP.primal_status(m))
+            println("Master termination: ", JuMP.termination_status(m))
+            println("Master primal:      ", JuMP.primal_status(m))
+        end
     end
 
     return (x = y, base_value = f0, master_value = master_value,
