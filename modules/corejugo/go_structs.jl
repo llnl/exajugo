@@ -199,7 +199,7 @@ function make_contingency_RefBuses(contingencies::DataFrame, G::DataFrame, N::Da
                 add_edge!(g, L.From[i], L.To[i])
             else
                 if !(parse(Int, L.CktID[i]) in conskt[idx[:]][1] )
-                    add_edge!(g, L.From[i], psd.L.To[i])
+                    add_edge!(g, L.From[i], L.To[i])
                 end
             end
         end
