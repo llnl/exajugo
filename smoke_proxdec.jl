@@ -8,9 +8,17 @@ using SCACOPFSubproblems
 
 const MOI = JuMP.MOI
 
-raw = joinpath(@__DIR__, "examples/500bus/case.raw")
-rop = joinpath(@__DIR__, "examples/500bus/case.rop")
-con = joinpath(@__DIR__, "examples/500bus/case-3conting.con")
+#raw = joinpath(@__DIR__, "examples/500bus/case.raw")
+#rop = joinpath(@__DIR__, "examples/500bus/case.rop")
+#con = joinpath(@__DIR__, "examples/500bus/case-3conting.con")
+
+#raw = joinpath(@__DIR__, "examples/Trial2_Real-Time-10x14/Network_03R-200/scenario_101/case.raw")
+#rop = joinpath(@__DIR__, "examples/Trial2_Real-Time-10x14/Network_03R-200/scenario_101/case.rop")
+#con = joinpath(@__DIR__, "examples/Trial2_Real-Time-10x14/Network_03R-200/scenario_101/case.con")
+
+raw = joinpath(@__DIR__, "examples/Network_02R-3-T1S3_Real-Time/case.raw")
+rop = joinpath(@__DIR__, "examples/Network_02R-3-T1S3_Real-Time/case.rop")
+con = joinpath(@__DIR__, "examples/Network_02R-3-T1S3_Real-Time/case.con")
 
 println("Loading SC-ACOPF data ...")
 

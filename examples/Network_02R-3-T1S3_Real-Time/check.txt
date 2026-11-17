@@ -1,0 +1,1140 @@
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_1/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_1/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.122749
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 39
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017680
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_2/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_2/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.126854
+buses: 500
+loads: 281
+fixed_shunts: 7
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 35
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017674
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_3/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_3/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.131088
+buses: 500
+loads: 281
+fixed_shunts: 7
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.019934
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_4/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_4/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.171308
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 32
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.019525
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_5/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_5/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.122742
+buses: 500
+loads: 281
+fixed_shunts: 9
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018677
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_6/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_6/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.098368
+buses: 500
+loads: 281
+fixed_shunts: 9
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017285
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_7/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_7/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.534728
+buses: 500
+loads: 281
+fixed_shunts: 9
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.025479
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_8/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_8/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.100777
+buses: 500
+loads: 281
+fixed_shunts: 9
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.020919
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_9/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_9/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.094116
+buses: 500
+loads: 281
+fixed_shunts: 15
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017033
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_10/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_10/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.116964
+buses: 500
+loads: 281
+fixed_shunts: 15
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018966
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_11/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_11/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.170557
+buses: 500
+loads: 281
+fixed_shunts: 15
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.028361
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_12/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_12/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.100045
+buses: 500
+loads: 281
+fixed_shunts: 15
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016719
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_13/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_13/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.230175
+buses: 500
+loads: 281
+fixed_shunts: 15
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016807
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_14/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_14/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.162163
+buses: 500
+loads: 281
+fixed_shunts: 15
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017489
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_15/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_15/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.110071
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016808
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_16/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_16/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.105433
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017298
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_17/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_17/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.143217
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.024009
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_18/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_18/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.121545
+buses: 500
+loads: 281
+fixed_shunts: 10
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017878
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_19/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_19/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.102849
+buses: 500
+loads: 281
+fixed_shunts: 10
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018325
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_20/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_20/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.139500
+buses: 500
+loads: 281
+fixed_shunts: 7
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.020660
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_21/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_21/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.097696
+buses: 500
+loads: 281
+fixed_shunts: 7
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017169
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_22/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_22/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.096928
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.016972
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_23/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_23/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.179863
+buses: 500
+loads: 281
+fixed_shunts: 3
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.016886
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_24/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_24/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.131598
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 38
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.015216
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_25/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_25/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.093230
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 34
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.016620
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_26/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_26/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.096448
+buses: 500
+loads: 281
+fixed_shunts: 7
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.018106
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_27/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_27/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.180099
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.016919
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_28/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_28/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.082760
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016242
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_29/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_29/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.219541
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.020671
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_30/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_30/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.095582
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017573
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_31/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_31/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.156860
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018030
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_32/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_32/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.127082
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018661
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_33/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_33/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.162381
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.019085
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_34/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_34/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.142612
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018473
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_35/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_35/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.203634
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018051
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_36/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_36/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.096059
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018123
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_37/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_37/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.119786
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017203
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_38/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_38/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.124898
+buses: 500
+loads: 281
+fixed_shunts: 14
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018915
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_39/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_39/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.116713
+buses: 500
+loads: 281
+fixed_shunts: 13
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016484
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_40/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_40/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.103734
+buses: 500
+loads: 281
+fixed_shunts: 13
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.015704
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_41/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_41/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.096575
+buses: 500
+loads: 281
+fixed_shunts: 13
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016091
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_42/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_42/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.181988
+buses: 500
+loads: 281
+fixed_shunts: 10
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016146
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_43/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_43/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.103169
+buses: 500
+loads: 281
+fixed_shunts: 9
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017345
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_44/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_44/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.174754
+buses: 500
+loads: 281
+fixed_shunts: 9
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 32
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.018449
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_45/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_45/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.119598
+buses: 500
+loads: 281
+fixed_shunts: 9
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 35
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.018075
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_46/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_46/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.179919
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 32
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.015589
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_47/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_47/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.111045
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017611
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_48/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_48/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.103659
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017215
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_49/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_49/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.137946
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017157
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_50/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_50/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.103330
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.016904
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_51/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_51/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.215732
+buses: 500
+loads: 281
+fixed_shunts: 5
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017720
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_52/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_52/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.102640
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.017809
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_53/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_53/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.105427
+buses: 500
+loads: 281
+fixed_shunts: 10
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 33
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 784
+check data time: 0.018426
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_54/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_54/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.121164
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018823
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_55/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_55/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.102762
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.016960
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_56/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_56/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.115359
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017253
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_57/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_57/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 6.305871
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.019314
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_58/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_58/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.137419
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018371
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_59/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_59/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.148343
+buses: 500
+loads: 281
+fixed_shunts: 8
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.018717
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_60/case.raw
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/scenario_60/case.con
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.inl
+/pic/dtn/go/Steve/On_GOComp/Trial_1_Real-Time/Network_02R-060/case.rop
+read data time: 0.098114
+buses: 500
+loads: 281
+fixed_shunts: 13
+generators: 224
+nontransformer_branches: 540
+transformers: 193
+areas: 1
+switched_shunts: 31
+generator inl records: 224
+generator dispatch records: 224
+active power dispatch records: 224
+piecewise linear cost functions: 224
+contingencies: 786
+check data time: 0.017787
